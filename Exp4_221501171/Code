@@ -1,0 +1,91 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Load dataset
+df = pd.read_csv('/content/Electric_Production.csv')
+df['DATE'] = pd.to_datetime(df['DATE'])
+df.set_index('DATE', inplace=True)
+ts = df['IPG2211A2N']
+
+# --------------------------
+# 1. Original Time Series
+# --------------------------
+plt.figure(figsize=(12, 4))
+ts.plot(title='1. Original Time Series')
+plt.xlabel('Time period')
+plt.ylabel('Electric Production')
+plt.grid()
+plt.show()
+
+# --------------------------
+# 2. Original vs Smoothed (Moving Avg)
+# --------------------------
+moving_avg = ts.rolling(window=12, center=True).mean()
+
+plt.figure(figsize=(12, 4))
+plt.plot(ts, label='Original', alpha=0.6)
+plt.plot(moving_avg, label='Smoothed', color='red', linewidth=2)
+plt.title('2. Original vs Smoothed Series (Moving Average)')
+plt.xlabel('Time period')
+plt.ylabel('Electric Production')
+plt.legend()
+plt.grid()
+plt.show()
+
+# --------------------------
+# 3. Aggregation (Monthly Mean)
+# --------------------------
+monthly_avg = ts.resample('M').mean()
+
+plt.figure(figsize=(12, 4))
+plt.plot(ts, label='Original', alpha=0.5)
+plt.plot(monthly_avg, label='Monthly Aggregated Avg', color='green', linewidth=2)
+plt.title('3. Aggregation using Monthly Average')
+plt.xlabel('Time period')
+plt.ylabel('Electric Production')
+plt.legend()
+plt.grid()
+plt.show()
+
+# --------------------------
+# 4. Moving Average (window = 12)
+# --------------------------
+plt.figure(figsize=(12, 4))
+plt.plot(ts, label='Original', alpha=0.5)
+plt.plot(moving_avg, label='Moving Average', color='orange', linewidth=2)
+plt.title('4. Moving Average Smoothing')
+plt.xlabel('Time period')
+plt.ylabel('Electric Production')
+plt.legend()
+plt.grid()
+plt.show()
+
+# --------------------------
+# 5. Exponential Smoothing
+# --------------------------
+exp_smooth = ts.ewm(span=12, adjust=False).mean()
+
+plt.figure(figsize=(12, 4))
+plt.plot(ts, label='Original', alpha=0.5)
+plt.plot(exp_smooth, label='Exponential Smoothing (span=12)', color='magenta', linewidth=2)
+plt.title('5. Exponential Smoothing')
+plt.xlabel('Time period')
+plt.ylabel('Electric Production')
+plt.legend()
+plt.grid()
+plt.show()
+
+# --------------------------
+# 6. Detrending (Original - Moving Average)
+# --------------------------
+detrended = ts - moving_avg
+
+plt.figure(figsize=(12, 4))
+plt.plot(detrended, label='Detrended Series', color='purple')
+plt.axhline(0, color='black', linestyle='--')
+plt.title('6. Detrended Time Series')
+plt.xlabel('Time period')
+plt.ylabel('Residual (No Trend)')
+plt.legend()
+plt.grid()
+plt.show()

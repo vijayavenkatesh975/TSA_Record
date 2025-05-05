@@ -1,0 +1,51 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Step 1: Create a manual time series DataFrame with missing values
+dates = pd.date_range(start='2023-01-01', periods=20, freq='D')
+data = {
+    'Date': dates,
+    'Temperature': [30, 31, np.nan, 32, np.nan, 34, 33, np.nan, 35, 36,
+                    37, np.nan, 38, 39, 40, np.nan, 41, 42, np.nan, 43]
+}
+df = pd.DataFrame(data)
+df.set_index('Date', inplace=True)
+
+# Step 2: Display original data
+print("Original Time Series Data before preprocessing :")
+print(df)
+
+# Step 3: Handle missing values using interpolation
+# Linear Interpolation
+df_interpolated = df.interpolate(method='linear')
+
+# Step 4: Display cleaned data
+print("\nTime Series Data after Interpolation:")
+print(df_interpolated)
+
+# Step 5: Plot original vs interpolated data
+plt.figure(figsize=(12, 6))
+
+# Plot original data
+plt.subplot(2, 1, 1)
+plt.plot(df.index, df['Temperature'], 'ro-', label='Original Data (with NaN)')
+plt.xlabel('Date')
+plt.ylabel('Temperature')
+plt.title('Original Time Series Data')
+plt.legend()
+plt.xticks(rotation=45)
+plt.grid()
+
+# Plot interpolated data
+plt.subplot(2, 1, 2)
+plt.plot(df_interpolated.index, df_interpolated['Temperature'], 'b.-', label='Interpolated Data')
+plt.xlabel('Date')
+plt.ylabel('Temperature')
+plt.title('Time Series Data after Interpolation')
+plt.legend()
+plt.xticks(rotation=45)
+plt.grid()
+
+plt.tight_layout()
+plt.show()
